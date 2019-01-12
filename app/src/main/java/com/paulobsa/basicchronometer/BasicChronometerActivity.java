@@ -12,7 +12,9 @@ import android.widget.Chronometer;
 public class BasicChronometerActivity extends AppCompatActivity {
 
     Button btnStartStop;
+    Button btnRestart;
     Chronometer mChronometer;
+    private long chronometerActualTime = 0;
     boolean started = false;
 
     @Override
@@ -22,6 +24,7 @@ public class BasicChronometerActivity extends AppCompatActivity {
 
         btnStartStop = findViewById(R.id.btnStartStop);
         mChronometer = findViewById(R.id.chronometer);
+        btnRestart = findViewById(R.id.btnRestart);
         setupChronometer();
 
         btnStartStop.setOnClickListener(new View.OnClickListener() {
@@ -30,6 +33,17 @@ public class BasicChronometerActivity extends AppCompatActivity {
                 startStopCronometer();
             }
         });
+
+        btnRestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                restartChronometer();
+            }
+        });
+    }
+
+    private void restartChronometer() {
+        setupChronometer();
     }
 
     private void setupChronometer() {
@@ -43,6 +57,11 @@ public class BasicChronometerActivity extends AppCompatActivity {
                 String t = (h < 10 ? "0"+h: h)+":"+(m < 10 ? "0"+m: m)+":"+ (s < 10 ? "0"+s: s);
                 chronometer.setText(t);
             }
+
+            @Override
+            protected void finalize() throws Throwable {
+                super.finalize();
+            }
         });
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.setText("00:00:00");
@@ -50,12 +69,16 @@ public class BasicChronometerActivity extends AppCompatActivity {
 
     private void startStopCronometer() {
         if (started) {
+            chronometerActualTime = mChronometer.getBase() - SystemClock.elapsedRealtime();
             mChronometer.stop();
             btnStartStop.setText(R.string.start);
+            btnRestart.setVisibility(View.VISIBLE);
             started = false;
         } else {
+            mChronometer.setBase(SystemClock.elapsedRealtime() + chronometerActualTime);
             mChronometer.start();
             btnStartStop.setText(R.string.stop);
+            btnRestart.setVisibility(View.GONE);
             started = true;
         }
     }
