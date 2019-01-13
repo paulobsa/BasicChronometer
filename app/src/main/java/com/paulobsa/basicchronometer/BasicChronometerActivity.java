@@ -43,7 +43,10 @@ public class BasicChronometerActivity extends AppCompatActivity {
     }
 
     private void restartChronometer() {
-        setupChronometer();
+        chronometerActualTime = 0;
+        btnRestart.setVisibility(View.GONE);
+        started = false;
+        mChronometer.setText("00:00:00");
     }
 
     private void setupChronometer() {
